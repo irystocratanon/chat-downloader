@@ -1427,7 +1427,11 @@ class YouTubeChatDownloader(BaseChatDownloader):
         max_attempts = params.get('max_attempts', 1)
         for attempt_number in attempts(max_attempts):
             try:
+                #print(url)
+                #print(self.session.cookies)
+                #print(self.session.cookies)
                 response = self._session_get(url)
+                #print(response.http_version)
                 html = response.text
                 yt = regex_search(html, self._YT_INITIAL_DATA_RE)
                 yt_initial_data = try_parse_json(yt)
@@ -1450,6 +1454,11 @@ class YouTubeChatDownloader(BaseChatDownloader):
 
                 player_response = regex_search(
                     html, self._YT_INITIAL_PLAYER_RESPONSE_RE)
+
+                #f = open("/tmp/youtube.html", "w")
+                #f.write(html)
+                #f.close()
+                #print(player_response)
 
                 player_response_info = try_parse_json(player_response, {})
 
@@ -1582,6 +1591,7 @@ class YouTubeChatDownloader(BaseChatDownloader):
                 error_message = error_message.strip()
 
                 status = playability_status.get('status')
+                #print(playability_status)
 
                 if status == 'ERROR':
                     raise VideoUnavailable(error_message)

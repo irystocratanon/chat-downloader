@@ -1,4 +1,4 @@
-
+import httpx
 import requests
 from http.cookiejar import (MozillaCookieJar, Cookie)
 import os
@@ -423,15 +423,17 @@ class BaseChatDownloader:
         """
 
         # Start a new session
-        self.session = requests.Session()
+        # self.session = requests.Session()
+        self.session = httpx.Client(http2=True, follow_redirects=True)
 
         headers = kwargs.get('headers')
         if headers is None:
             headers = {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36',
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.5304.110 Safari/537.36',
                 'Accept-Language': 'en-US, en, *'  # 'de-CH'#'fr-CH'#
             }
         self.session.headers = headers
+        #print(headers)
 
         # Set proxies if present
         proxy = kwargs.get('proxy')
@@ -439,7 +441,7 @@ class BaseChatDownloader:
             if proxy == '':
                 proxies = {}
             else:
-                proxies = {'http': proxy, 'https': proxy}
+                proxies = {'http://': proxy, 'https://': proxy}
 
             self.session.proxies.update(proxies)
 
@@ -472,7 +474,8 @@ class BaseChatDownloader:
         :return: Dictionary of cookies
         :rtype: dict
         """
-        return requests.utils.dict_from_cookiejar(self.session.cookies)
+        return self.session.cookies
+        #return requests.utils.dict_from_cookiejar(self.session.cookies)
 
     def set_cookie_value(self, domain, name, value, expire_time=None, port=None,
                          path='/', secure=False, discard=False, rest={}, **kwargs):
@@ -480,7 +483,10 @@ class BaseChatDownloader:
             0, name, value, port, port is not None, domain, True,
             domain.startswith('.'), path, True, secure, expire_time,
             discard, None, None, rest)
-        self.session.cookies.set_cookie(cookie)
+        #print(self.session.cookies)
+        #print(cookie)
+        self.session.cookies.set(name, value, domain, path)
+        #self.session.cookies.set_cookie(cookie)
 
     def get_cookie_value(self, name, default=None):
         """Return the value for key if key is in the cookie dictionary, else default.
