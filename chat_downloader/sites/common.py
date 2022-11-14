@@ -434,7 +434,8 @@ class BaseChatDownloader:
 
         # Start a new session
         # self.session = requests.Session()
-        self.session = httpx.Client(http2=True, follow_redirects=True, proxies=proxies)
+        timeout = httpx.Timeout(10.0, connect=60.0)
+        self.session = httpx.Client(http2=True, follow_redirects=True, proxies=proxies, timeout=timeout)
 
         headers = kwargs.get('headers')
         if headers is None:
