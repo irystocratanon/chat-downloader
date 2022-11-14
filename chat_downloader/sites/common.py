@@ -422,9 +422,19 @@ class BaseChatDownloader:
         :raises CookieError: if unable to read or parse the cookie file
         """
 
+        # Set proxies if present
+        proxy = kwargs.get('proxy')
+        if proxy is not None:
+            if proxy == '':
+                proxies = {}
+            else:
+                proxies = {'http://': proxy, 'https://': proxy}
+
+            #self.session.proxies.update(proxies)
+
         # Start a new session
         # self.session = requests.Session()
-        self.session = httpx.Client(http2=True, follow_redirects=True)
+        self.session = httpx.Client(http2=True, follow_redirects=True, proxies=proxies)
 
         headers = kwargs.get('headers')
         if headers is None:
@@ -434,16 +444,6 @@ class BaseChatDownloader:
             }
         self.session.headers = headers
         #print(headers)
-
-        # Set proxies if present
-        proxy = kwargs.get('proxy')
-        if proxy is not None:
-            if proxy == '':
-                proxies = {}
-            else:
-                proxies = {'http://': proxy, 'https://': proxy}
-
-            self.session.proxies.update(proxies)
 
         # Set cookies if present
         cookies = kwargs.get('cookies')
