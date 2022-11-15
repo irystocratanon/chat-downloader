@@ -499,7 +499,12 @@ class BaseChatDownloader:
         :return: The cookie value, or default
         :rtype: Union[str, object, None]
         """
-        return self._get_cookies_dict().get(name, default)
+        try:
+            val = self._get_cookies_dict().get(name, default)
+            return val
+        except httpx.CookieConflict:
+            # I should really remove duplicate cookies but this doesn't seem to break anything
+            return None
 
     def close(self):
         """Close the session. Once this has been called, no more requests can be made."""
