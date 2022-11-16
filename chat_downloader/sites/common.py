@@ -429,6 +429,8 @@ class BaseChatDownloader:
                 proxies = {}
             else:
                 proxies = {'http://': proxy, 'https://': proxy}
+        else:
+            proxies = {}
 
             #self.session.proxies.update(proxies)
 
