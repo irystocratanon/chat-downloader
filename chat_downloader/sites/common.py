@@ -442,7 +442,7 @@ class BaseChatDownloader:
         headers = kwargs.get('headers')
         if headers is None:
             headers = {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.5304.110 Safari/537.36',
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36',
                 'Accept-Language': 'en-US, en, *'  # 'de-CH'#'fr-CH'#
             }
         self.session.headers = headers
