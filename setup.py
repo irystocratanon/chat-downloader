@@ -17,6 +17,7 @@ with open('README.rst') as readme_file:
 
 requirements = [
     'requests',
+    'httpx[http2,brotli]',
     'isodate',
     'docstring-parser',
     'colorlog',
