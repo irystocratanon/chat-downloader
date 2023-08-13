@@ -838,7 +838,6 @@ class YouTubeChatDownloader(BaseChatDownloader):
             currency_code = YouTubeChatDownloader._CURRENCY_SYMBOLS.get(
                 currency_symbol, currency_symbol)
             amount = float(info[1].replace(',', ''))
-
         else:  # Unable to get info
             amount = float(re.sub(r'[^\d\.]+', '', mixed_text))
             currency_symbol = currency_code = None
@@ -873,7 +872,6 @@ class YouTubeChatDownloader(BaseChatDownloader):
         # ticker_paid_message_item
         'fullDurationSec': r('ticker_duration', int_or_none),
         'amount': r('money', _parse_currency),
-
 
         # ticker_sponsor_item
         'detailText': r(None, _parse_runs, True),
@@ -978,6 +976,7 @@ class YouTubeChatDownloader(BaseChatDownloader):
     _KNOWN_ADD_ACTION_TYPES = {
         'addChatItemAction': [
             # message saying Live Chat replay is on
+            'liveChatSponsorshipsGiftPurchaseAnnouncementRenderer',
             'liveChatViewerEngagementMessageRenderer',
             'liveChatMembershipItemRenderer',
             'liveChatTextMessageRenderer',
@@ -1034,7 +1033,7 @@ class YouTubeChatDownloader(BaseChatDownloader):
         'addBannerToLiveChatCommand': [
             'liveChatBannerRenderer',
             'liveChatBannerHeaderRenderer',
-            'liveChatTextMessageRenderer',
+            'liveChatTextMessageRenderer'
         ]
     }
 
@@ -1956,6 +1955,15 @@ class YouTubeChatDownloader(BaseChatDownloader):
                             continue  # first time and invalid start time
                         elif before_start or after_end:
                             return  # while actually searching, if time is invalid
+
+                    try:
+                        is_gift = action['addLiveChatTickerItemAction']['item']['liveChatTickerSponsorItemRenderer']['showItemEndpoint']['showLiveChatItemEndpoint']['renderer']['liveChatSponsorshipsGiftPurchaseAnnouncementRenderer']
+                        if is_gift:
+                            data['author']['name'] = is_gift['header']['liveChatSponsorshipsHeaderRenderer']['authorName']['simpleText']
+                            data['author']['images'] = is_gift['header']['liveChatSponsorshipsHeaderRenderer']['authorPhoto']['thumbnails']
+                            data['gifts'] = int(action['addLiveChatTickerItemAction']['item']['liveChatTickerSponsorItemRenderer']['detailText']['simpleText'])
+                    except:
+                        pass
 
                     # try to reconstruct time in seconds from timestamp and stream start
                     # if data.get('time_in_seconds') is None and data.get('timestamp') and stream_start_time:
