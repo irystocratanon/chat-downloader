@@ -37,7 +37,7 @@ def generator(site, test):
             expected_result = test.get('expected_result') or {}
 
             if not params:
-                raise Exception('No parameters specified.') # Invalid test
+                self.assertFalse('No parameters specified.')  # Invalid test
 
             messages_list = []
             try:
@@ -65,7 +65,7 @@ def generator(site, test):
                 if callable(messages_condition):
                     self.assertTrue(messages_condition(messages_list))
                 else:
-                    raise Exception('Message check is not callable.') # Invalid test
+                    self.assertFalse('Message check is not callable.')
 
             actual_result = {
                 'message_types': [],
